@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "StockAnalysis": {
+      "title": "股票分析記錄",
+      "description": "儲存股票的分析數據與 Gemini 的判斷結果",
+      "type": "object",
+      "properties": {
+        "stockId": { "type": "string", "description": "股票代號與名稱" },
+        "rsi": { "type": "number", "description": "RSI 指標值" },
+        "revenueGap": { "type": "string", "description": "預期差分析" },
+        "marginShortRatio": { "type": "string", "description": "資券同增與券資比" },
+        "peg": { "type": "number", "description": "本益成長比 (PEG)" },
+        "ma5Status": { "type": "string", "description": "5日線支撐狀況" },
+        "volumeStatus": { "type": "string", "description": "成交量變化" },
+        "institutionalStatus": { "type": "string", "description": "投信/主力動向" },
+        "judgment": { "type": "string", "enum": ["可以買進", "建議觀望"], "description": "Gemini 的最終判讀" },
+        "analysisText": { "type": "string", "description": "Gemini 的詳細分析文字" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "建立時間" }
+      },
+      "required": ["stockId", "rsi", "judgment", "analysisText", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/analyses": {
+      "schema": "StockAnalysis",
+      "description": "使用者的股票分析歷史記錄"
+    }
+  }
+}

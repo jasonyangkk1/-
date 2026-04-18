@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidAnalysis(data) {
+      return data.keys().hasAll(['stockId', 'rsi', 'judgment', 'analysisText', 'createdAt'])
+        && data.stockId is string && data.stockId.size() <= 100
+        && data.rsi is number
+        && data.judgment in ['可以買進', '建議觀望']
+        && data.analysisText is string && data.analysisText.size() <= 5000
+        && data.createdAt is timestamp;
+    }
+
+    match /analyses/{analysisId} {
+      // For this app, we allow public reading and creation to make it easy for users to try it out.
+      // In a production app with users, we would restrict this to request.auth.uid.
+      allow read, list: if true;
+      allow create: if isValidAnalysis(request.resource.data);
+      allow delete: if true; // Simple deletion for the demo
+      allow update: if false; // Analysis records should be immutable
+    }
+  }
+}

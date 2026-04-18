@@ -1,0 +1,6 @@
+{
+  "name": "強勢股分析儀 (Strong Stock Analyzer)",
+  "description": "結合專業動能交易邏輯與 Gemini AI，針對 RSI 高檔股票進行深度動能分析，判斷主力動向與買進時機。",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

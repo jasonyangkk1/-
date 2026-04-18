@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,900;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "PingFang TC", "Microsoft JhengHei", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Playfair Display", serif;
+  
+  --color-brand-bg: #0a0e14;
+  --color-brand-accent: #00f2ff;
+  --color-brand-buy: #00ff88;
+  --color-brand-watch: #ffcc00;
+  --color-brand-text: #e0e0e0;
+  --color-brand-glass: rgba(255, 255, 255, 0.05);
+  --color-brand-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text antialiased min-h-screen relative overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 0% 0%, #1a2a3a 0%, transparent 40%), 
+      radial-gradient(circle at 100% 100%, #1a1a2e 0%, transparent 40%);
+  }
+}
+
+.glass-card {
+  @apply bg-brand-glass border border-brand-glass-border backdrop-blur-xl rounded-[20px] transition-all duration-300;
+}
+
+.glass-pill {
+  @apply bg-white/5 border border-white/10 backdrop-blur-md rounded-full transition-all;
+}
+
+.trading-label {
+  @apply text-[11px] uppercase tracking-[1.5px] font-semibold text-white/40 mb-2 flex items-center gap-2;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-accent/50 focus:border-brand-accent transition-all placeholder:text-white/20;
+}
+
+.status-badge {
+  @apply px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider border transition-all;
+}
+
+.status-buy {
+  @apply bg-brand-buy/15 text-brand-buy border-brand-buy/30 shadow-[0_0_15px_rgba(0,255,136,0.1)];
+}
+
+.status-watch {
+  @apply bg-brand-watch/15 text-brand-watch border-brand-watch/30 shadow-[0_0_15px_rgba(255,204,0,0.1)];
+}
+
+.metric-item {
+  @apply bg-white/3 border border-white/5 p-4 rounded-xl flex flex-col gap-1;
+}
+
+.gemini-gradient {
+  @apply bg-gradient-to-r from-[#4285f4] to-[#9b72cb] text-white;
+}
+
+/* Custom scrollbar for dark glass theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20;
+}
