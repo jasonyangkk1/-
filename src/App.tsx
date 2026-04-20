@@ -60,11 +60,11 @@ export default function App() {
   });
 
   useEffect(() => {
-    // 實作最大容量限制：透過 limit(30) 確保歷史紀錄只保留最近 30 筆
+    // 實作最大容量限制：透過 limit(100) 確保歷史紀錄可留存更多筆
     const q = query(
       collection(db, "analyses"), 
       orderBy("createdAt", "desc"),
-      limit(30)
+      limit(100)
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map(doc => ({
@@ -229,7 +229,7 @@ export default function App() {
                 <div className="flex justify-between items-end px-2">
                   <div className="trading-label">分析記錄目錄</div>
                   <div className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest bg-white/5 px-2 py-1 rounded">
-                    容量上限: 30 / 已存: {results.length}
+                    容量上限: 100 / 已存: {results.length}
                   </div>
                 </div>
                 {results.length === 0 ? (
@@ -256,9 +256,13 @@ export default function App() {
                             {record.judgment}
                           </div>
                           <div>
-                            <h3 className="font-bold text-lg text-white font-mono tracking-tight">
+                            <h3 className="font-bold text-lg text-white font-mono tracking-tight flex items-center">
                               {record.stockId} 
-                              {record.stockName && <span className="ml-2 text-sm text-white/50 font-sans tracking-normal">{record.stockName}</span>}
+                              {record.stockName && (
+                                <span className="ml-3 text-sm font-sans font-medium text-brand-accent/80 border-l border-white/10 pl-3">
+                                  {record.stockName}
+                                </span>
+                              )}
                             </h3>
                             <div className="flex gap-4 mt-1">
                               <span className="text-[10px] font-mono font-black text-brand-accent bg-brand-accent/10 px-1.5 py-0.5 rounded">RSI: {record.rsi}</span>

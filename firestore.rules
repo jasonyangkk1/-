@@ -16,11 +16,12 @@ service cloud.firestore {
     }
 
     function isValidAnalysis(data) {
-      return data.keys().hasAll(['stockId', 'rsi', 'judgment', 'analysisText', 'createdAt'])
-        && data.stockId is string && data.stockId.size() <= 100
+      return data.keys().hasAll(['stockId', 'rsi', 'stockName', 'revenueGap', 'marginShortStatus', 'pegValue', 'ma5VolumeStatus', 'institutionalStatus', 'summary', 'judgment', 'createdAt'])
+        && data.stockId is string 
+        && data.stockName is string
         && data.rsi is number
         && data.judgment in ['可以買進', '建議觀望']
-        && data.analysisText is string && data.analysisText.size() <= 5000
+        && data.summary is string
         && data.createdAt is timestamp;
     }
 
