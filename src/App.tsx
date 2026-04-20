@@ -260,7 +260,7 @@ export default function App() {
                               {record.stockId} 
                               {record.stockName && (
                                 <span className="ml-3 text-sm font-sans font-bold text-brand-accent brightness-125 bg-brand-accent/5 px-2 py-0.5 rounded-md border border-brand-accent/20">
-                                  {record.stockName}
+                                  {record.stockName.replace(/\(\d+\)/g, '').trim()}
                                 </span>
                               )}
                             </h3>
