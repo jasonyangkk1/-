@@ -59,6 +59,7 @@ export async function analyzeStock(data: StockInput) {
           responseSchema: {
             type: Type.OBJECT,
             properties: {
+              stockName: { type: Type.STRING, description: "股票名稱 (例如: 聯亞)" },
               revenueGap: { type: Type.STRING, description: "預期差分析" },
               marginShortStatus: { type: Type.STRING, description: "資券動向分析" },
               pegValue: { type: Type.STRING, description: "PEG 估算" },
@@ -67,7 +68,7 @@ export async function analyzeStock(data: StockInput) {
               summary: { type: Type.STRING, description: "綜合分析總結" },
               judgment: { type: Type.STRING, enum: ["可以買進", "建議觀望"] }
             },
-            required: ["revenueGap", "marginShortStatus", "pegValue", "ma5VolumeStatus", "institutionalStatus", "summary", "judgment"]
+            required: ["stockName", "revenueGap", "marginShortStatus", "pegValue", "ma5VolumeStatus", "institutionalStatus", "summary", "judgment"]
           }
         }
       });
@@ -92,6 +93,7 @@ export async function analyzeStock(data: StockInput) {
     console.log("Successfully parsed analysis result.");
     
     return parsedResult as { 
+      stockName: string;
       revenueGap: string;
       marginShortStatus: string;
       pegValue: string;

@@ -25,7 +25,8 @@ import {
   onSnapshot, 
   deleteDoc, 
   doc,
-  Timestamp 
+  Timestamp,
+  limit 
 } from "firebase/firestore";
 import { db } from "./lib/firebase";
 import { analyzeStock, type StockInput } from "./services/geminiService";
@@ -35,6 +36,7 @@ type Tab = "analyze" | "history";
 
 interface AnalysisRecord extends StockInput {
   id: string;
+  stockName: string;
   revenueGap: string;
   marginShortStatus: string;
   pegValue: string;
@@ -58,7 +60,12 @@ export default function App() {
   });
 
   useEffect(() => {
-    const q = query(collection(db, "analyses"), orderBy("createdAt", "desc"));
+    // 實作最大容量限制：透過 limit(30) 確保歷史紀錄只保留最近 30 筆
+    const q = query(
+      collection(db, "analyses"), 
+      orderBy("createdAt", "desc"),
+      limit(30)
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -136,7 +143,7 @@ export default function App() {
                 activeTab === "history" ? "bg-white/10 text-brand-accent shadow-[inset_0_0_10px_rgba(0,242,255,0.1)]" : "text-white/40 hover:text-white/60"
               )}
             >
-              歷史記錄
+              搜尋歷史紀錄
             </button>
           </div>
         </div>
@@ -219,7 +226,12 @@ export default function App() {
               className="max-w-4xl mx-auto gap-8 grid grid-cols-1 lg:grid-cols-[3fr_2fr]"
             >
               <div className="space-y-4 order-2 lg:order-1">
-                <div className="trading-label px-2">分析記錄集目錄</div>
+                <div className="flex justify-between items-end px-2">
+                  <div className="trading-label">分析記錄目錄</div>
+                  <div className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest bg-white/5 px-2 py-1 rounded">
+                    容量上限: 30 / 已存: {results.length}
+                  </div>
+                </div>
                 {results.length === 0 ? (
                   <div className="glass-card p-20 text-center text-white/20">
                     <History size={64} className="mx-auto mb-6 opacity-10" />
@@ -244,7 +256,10 @@ export default function App() {
                             {record.judgment}
                           </div>
                           <div>
-                            <h3 className="font-bold text-lg text-white font-mono tracking-tight">{record.stockId}</h3>
+                            <h3 className="font-bold text-lg text-white font-mono tracking-tight">
+                              {record.stockId} 
+                              {record.stockName && <span className="ml-2 text-sm text-white/50 font-sans tracking-normal">{record.stockName}</span>}
+                            </h3>
                             <div className="flex gap-4 mt-1">
                               <span className="text-[10px] font-mono font-black text-brand-accent bg-brand-accent/10 px-1.5 py-0.5 rounded">RSI: {record.rsi}</span>
                               <span className="text-[10px] font-mono font-black text-white/40 py-0.5 whitespace-nowrap">
