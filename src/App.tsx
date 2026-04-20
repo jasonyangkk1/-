@@ -36,13 +36,13 @@ type Tab = "analyze" | "history";
 
 interface AnalysisRecord extends StockInput {
   id: string;
-  stockName: string;
-  revenueGap: string;
-  marginShortStatus: string;
-  pegValue: string;
-  ma5VolumeStatus: string;
-  institutionalStatus: string;
-  summary: string;
+  stockName?: string;
+  revenueGap?: string;
+  marginShortStatus?: string;
+  pegValue?: string;
+  ma5VolumeStatus?: string;
+  institutionalStatus?: string;
+  summary?: string;
   judgment: "可以買進" | "建議觀望";
   createdAt: any;
 }
@@ -256,10 +256,10 @@ export default function App() {
                             {record.judgment}
                           </div>
                           <div>
-                            <h3 className="font-bold text-lg text-white font-mono tracking-tight flex items-center">
+                            <h3 className="font-bold text-lg text-white font-mono tracking-tight flex items-baseline">
                               {record.stockId} 
                               {record.stockName && (
-                                <span className="ml-3 text-sm font-sans font-medium text-brand-accent/80 border-l border-white/10 pl-3">
+                                <span className="ml-3 text-sm font-sans font-bold text-brand-accent brightness-125 bg-brand-accent/5 px-2 py-0.5 rounded-md border border-brand-accent/20">
                                   {record.stockName}
                                 </span>
                               )}
