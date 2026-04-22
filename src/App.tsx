@@ -27,7 +27,8 @@ import {
   doc,
   Timestamp,
   limit,
-  getDocFromServer
+  getDocFromServer,
+  where
 } from "firebase/firestore";
 import { db } from "./lib/firebase";
 import { analyzeStock, type StockInput } from "./services/geminiService";
@@ -73,10 +74,14 @@ export default function App() {
       }
     };
     testConnection();
+    
+    const currentDomain = window.location.hostname;
 
     // 實作最大容量限制：透過 limit(100) 確保歷史紀錄可留存更多筆
+    // 增加 domain 過濾以分開不同 App 的歷史紀錄
     const q = query(
       collection(db, "analyses"), 
+      where("domain", "==", currentDomain),
       orderBy("createdAt", "desc"),
       limit(100)
     );
@@ -100,6 +105,7 @@ export default function App() {
       const record = {
         ...formData,
         ...result,
+        domain: window.location.hostname,
         createdAt: Timestamp.now()
       };
 
