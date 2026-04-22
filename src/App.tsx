@@ -26,7 +26,8 @@ import {
   deleteDoc, 
   doc,
   Timestamp,
-  limit 
+  limit,
+  getDocFromServer
 } from "firebase/firestore";
 import { db } from "./lib/firebase";
 import { analyzeStock, type StockInput } from "./services/geminiService";
@@ -60,6 +61,19 @@ export default function App() {
   });
 
   useEffect(() => {
+    // 建立連線測試
+    const testConnection = async () => {
+      try {
+        await getDocFromServer(doc(db, 'analyses', 'connection_test'));
+        console.log("Firestore connection verified.");
+      } catch (error: any) {
+        if (error.message?.includes('offline') || error.message?.includes('permission')) {
+          console.error("Firebase connection error:", error.message);
+        }
+      }
+    };
+    testConnection();
+
     // 實作最大容量限制：透過 limit(100) 確保歷史紀錄可留存更多筆
     const q = query(
       collection(db, "analyses"), 
