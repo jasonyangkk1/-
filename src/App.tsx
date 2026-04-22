@@ -96,6 +96,7 @@ export default function App() {
       const record = {
         ...formData,
         ...result,
+        rsi: Number(formData.rsi), // 確保為數字
         createdAt: Timestamp.now()
       };
 

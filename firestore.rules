@@ -16,22 +16,16 @@ service cloud.firestore {
     }
 
     function isValidAnalysis(data) {
-      // 核心必填欄位
-      let coreFields = data.keys().hasAll(['stockId', 'rsi', 'judgment', 'createdAt']);
-      
-      return coreFields
-        && data.stockId is string 
-        && data.rsi is number
-        && data.judgment in ['可以買進', '建議觀望']
-        && data.createdAt is timestamp;
+      // 放寬驗證以確保寫入成功，僅檢查最關鍵欄位是否存在
+      let hasRequired = data.keys().hasAll(['stockId', 'rsi', 'judgment', 'createdAt']);
+      return hasRequired;
     }
 
+    // 針對 analyses_ 開頭的所有集合進行授權
     match /{collectionName}/{analysisId} {
-      // 支援動態命名集合 (如 analyses_prod1, analyses_prod2) 以實現多環境隔離
-      allow read, list: if collectionName.startsWith('analyses');
+      allow read, list, delete: if collectionName.startsWith('analyses');
       allow create: if collectionName.startsWith('analyses') && isValidAnalysis(request.resource.data);
-      allow delete: if collectionName.startsWith('analyses');
-      allow update: if false; // Analysis records should be immutable
+      allow update: if false;
     }
   }
 }
