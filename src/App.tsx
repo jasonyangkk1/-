@@ -47,16 +47,6 @@ interface AnalysisRecord extends StockInput {
   createdAt: any;
 }
 
-// 動態決定資料庫集合名稱，根據當前網址 (Domain) 自動分離歷史紀錄
-const getCollectionPath = () => {
-  if (typeof window === "undefined") return "analyses_default";
-  // 取得 hostname 並處理特殊字元以符合 Firestore 集合規範
-  const domain = window.location.hostname.replace(/[^a-zA-Z0-9]/g, "_");
-  return `analyses_${domain}`;
-};
-
-const COLLECTION_PATH = getCollectionPath();
-
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>("analyze");
   const [loading, setLoading] = useState(false);
@@ -72,7 +62,7 @@ export default function App() {
   useEffect(() => {
     // 實作最大容量限制：透過 limit(100) 確保歷史紀錄可留存更多筆
     const q = query(
-      collection(db, COLLECTION_PATH), 
+      collection(db, "analyses"), 
       orderBy("createdAt", "desc"),
       limit(100)
     );
@@ -96,11 +86,10 @@ export default function App() {
       const record = {
         ...formData,
         ...result,
-        rsi: Number(formData.rsi), // 確保為數字
         createdAt: Timestamp.now()
       };
 
-      await addDoc(collection(db, COLLECTION_PATH), record);
+      await addDoc(collection(db, "analyses"), record);
       setActiveTab("history"); // Auto switch after analysis for feedback
     } catch (error: any) {
       console.error(error);
@@ -113,7 +102,7 @@ export default function App() {
   const deleteRecord = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (confirm("確定要刪除此記錄嗎？")) {
-      await deleteDoc(doc(db, COLLECTION_PATH, id));
+      await deleteDoc(doc(db, "analyses", id));
       if (selectedHistory?.id === id) setSelectedHistory(null);
     }
   };

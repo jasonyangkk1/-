@@ -16,16 +16,23 @@ service cloud.firestore {
     }
 
     function isValidAnalysis(data) {
-      // 放寬驗證以確保寫入成功，僅檢查最關鍵欄位是否存在
-      let hasRequired = data.keys().hasAll(['stockId', 'rsi', 'judgment', 'createdAt']);
-      return hasRequired;
+      // 核心必填欄位
+      let coreFields = data.keys().hasAll(['stockId', 'rsi', 'judgment', 'createdAt']);
+      
+      return coreFields
+        && data.stockId is string 
+        && data.rsi is number
+        && data.judgment in ['可以買進', '建議觀望']
+        && data.createdAt is timestamp;
     }
 
-    // 針對 analyses_ 開頭的所有集合進行授權
-    match /{collectionName}/{analysisId} {
-      allow read, list, delete: if collectionName.startsWith('analyses');
-      allow create: if collectionName.startsWith('analyses') && isValidAnalysis(request.resource.data);
-      allow update: if false;
+    match /analyses/{analysisId} {
+      // For this app, we allow public reading and creation to make it easy for users to try it out.
+      // In a production app with users, we would restrict this to request.auth.uid.
+      allow read, list: if true;
+      allow create: if isValidAnalysis(request.resource.data);
+      allow delete: if true; // Simple deletion for the demo
+      allow update: if false; // Analysis records should be immutable
     }
   }
 }
