@@ -26,12 +26,11 @@ service cloud.firestore {
         && data.createdAt is timestamp;
     }
 
-    match /analyses/{analysisId} {
-      // For this app, we allow public reading and creation to make it easy for users to try it out.
-      // In a production app with users, we would restrict this to request.auth.uid.
-      allow read, list: if true;
-      allow create: if isValidAnalysis(request.resource.data);
-      allow delete: if true; // Simple deletion for the demo
+    match /{collectionName}/{analysisId} {
+      // 支援動態命名集合 (如 analyses_prod1, analyses_prod2) 以實現多環境隔離
+      allow read, list: if collectionName.startsWith('analyses');
+      allow create: if collectionName.startsWith('analyses') && isValidAnalysis(request.resource.data);
+      allow delete: if collectionName.startsWith('analyses');
       allow update: if false; // Analysis records should be immutable
     }
   }
