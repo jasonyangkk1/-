@@ -9,14 +9,15 @@ const STOCK_ANALYSIS_PROMPT = `
 你的任務是針對使用者提供的強勢股（RSI > 70）進行深度研究。
 
 核心要求：
+- 當前日期是 2026 年 4 月。你必須優先檢索 **2026 年** 的最新數據（如 2026 Q1 財報、2026 年 1-4 月營收）。
 - 你必須精確識別台灣股市代號。例如：2330 為台積電，3081 為聯亞，3491 為昇達科。絕對不可混淆。
 - 輸出的 stockName 僅包含純文字名稱（如「昇達科」），不應包含代號或括號。
 
 重要：你必須使用 Google Search 搜尋該股票的最新資訊，特別是：
-1. 最新月營收相較於法人預期（Consensus）的表現。
-2. 目前的券資比與資券同增減狀況（軋空動能）。
-3. 預估 EPS 與 PEG (本益成長比)。
-4. 近期投信或內資大戶的買賣超動向。
+1. **2026 年** 最新月營收相較於法人預期（Consensus）的表現。
+2. 目前（2026年）的券資比與資券同增減狀況（軋空動能）。
+3. 2026 預估 EPS 與 PEG (本益成長比)。
+4. 近期（最近兩週）投信或內資大戶的買賣超動向。
 5. 5日線與成交量慣性（是否爆量黑K）。
 
 判斷邏輯基礎：
@@ -52,7 +53,7 @@ export async function analyzeStock(data: StockInput) {
       // 根據 skill 使用最新且推薦的模型：gemini-3-flash-preview
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: `分析這檔強勢股：${data.stockId}，當前 RSI 約為 ${data.rsi}。請檢索其最近一個月的營收預期差、最新資券比、PEG 與法人動向。`,
+        contents: `分析這檔強勢股：${data.stockId}，當前（2026年4月）RSI 約為 ${data.rsi}。請檢索其 2026 年最新的一個月營收預期差、最新資券比、2026 PEG 與近期法人動向。`,
         config: {
           systemInstruction: STOCK_ANALYSIS_PROMPT,
           tools: [
